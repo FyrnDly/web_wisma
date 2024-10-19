@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('mac_address')->unique();
+            $table->string('type');
             $table->foreignId('created_by')->constrained('users');
             $table->timestamps();
             $table->softDeletes();

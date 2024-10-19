@@ -8,8 +8,11 @@ use App\Filament\Rules\PoliciesResource as Resource;
 use App\Models\Device;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Infolists;
+use Filament\Infolists\Infolist;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -26,13 +29,42 @@ class DeviceResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('name')
                     ->required()
+                    ->label('Nama Perangkat')
                     ->maxLength(255),
                 Forms\Components\TextInput::make('mac_address')
+                    ->label('Mac Address')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('created_by')
-                    ->required()
-                    ->numeric(),
+                Forms\Components\Select::make('type')
+                    ->options([
+                        'main' => 'Navigasi',
+                        'secondary' => 'Beacon'
+                    ])->required()
+                    ->label('Tipe')
+                    ->native(false),
+                Forms\Components\Hidden::make('created_by')
+                    ->required()->default(fn()=> Auth::user()->id),
+            ])->columns([
+                'md' => 1,
+                'xl' => 3,
+            ]);
+    }
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Infolists\Components\Section::make([
+                    Infolists\Components\TextEntry::make('name')->label('Nama Perangkat'),
+                    Infolists\Components\TextEntry::make('mac_address')->label('Mac Address Perangkat'),
+                    Infolists\Components\TextEntry::make('type')->getStateUsing(fn($record)=>match ($record->type) {
+                        'main' => 'Navigasi',
+                        'secondary' => 'Beacon'
+                    })->label('Tipe Perangkat')->badge(),
+                ])->columns([
+                    'md' => 2,
+                    'xl' => 3,
+                ]),
             ]);
     }
 
@@ -41,11 +73,22 @@ class DeviceResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
+                    ->searchable()
+                    ->label('Nama Perangkat'),
                 Tables\Columns\TextColumn::make('mac_address')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('created_by')
-                    ->numeric()
+                    ->searchable()
+                    ->copyable()->copyMessageDuration(1500)
+                    ->icon('heroicon-o-clipboard-document')
+                    ->iconPosition('after')
+                    ->label('Mac Address')
+                    ->alignCenter(),
+                Tables\Columns\TextColumn::make('type')
+                    ->label('Tipe')
+                    ->getStateUsing(fn($record)=>match ($record->type) {
+                        'main' => 'Navigasi',
+                        'secondary' => 'Beacon'
+                    })->badge()
+                    ->alignCenter()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -64,6 +107,7 @@ class DeviceResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
                 Tables\Actions\ForceDeleteAction::make(),
