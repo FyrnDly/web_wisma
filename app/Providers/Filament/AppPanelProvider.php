@@ -34,7 +34,7 @@ class AppPanelProvider extends PanelProvider
             ->id('app')
             ->path('')
             ->login(Login::class)
-            ->registration(Register::class)
+            // ->registration(Register::class)
             ->profile(UpdateProfile::class)
             ->userMenuItems([
                 MenuItem::make()

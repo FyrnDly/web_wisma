@@ -40,7 +40,12 @@ class UserResource extends Resource
                     ->label('Alamat Email')
                     ->email()->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('roles')->label('Kelompok Pengguna'),
+                Forms\Components\Select::make('roles')
+                    ->label('Kelompok Pengguna')
+                    ->options([
+                        'viewer' => "Staff",
+                        'admin' => "Admin",
+                    ])->multiple(),
                 Forms\Components\Textarea::make('address')
                     ->label('Alamat Pengguna')
                     ->columnSpanFull(),
@@ -65,8 +70,9 @@ class UserResource extends Resource
                     })
                     ->copyable()
                     ->copyMessage('Email address copied')
-                    ->copyMessageDuration(1500)
                     ->searchable(),
+                Tables\Columns\TextColumn::make('group')
+                    ->label('Kelompok Pengguna')->badge(),
                 Tables\Columns\IconColumn::make('verified')
                     ->label('Status Pengguna')
                     ->alignCenter()->boolean(),
@@ -128,10 +134,10 @@ class UserResource extends Resource
                         ->iconColor(function ($record) {
                             return $record->email_verified_at ? 'success' : 'danger';
                         }),
-                    Infolists\Components\TextEntry::make('roles')
+                    Infolists\Components\TextEntry::make('group')
                         ->label('Kelompok Pengguna')
                         ->default('Belum Ditambahkan')
-                        ->badge()->color('gray'),
+                        ->badge(),
                     Infolists\Components\TextEntry::make('verified')
                         ->label('Status Pengguna')
                         ->badge()

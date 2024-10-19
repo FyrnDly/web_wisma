@@ -10,7 +10,27 @@ use Filament\Resources\Resource;
 class PoliciesResource extends Resource
 {
     public static function canViewAny(): bool {
-        return Auth::user()->hasRoles(['admin','root']);
+        return Auth::user()->hasRoles(['admin','root', 'viewer']);
+    }
+
+    public static function canCreate(): bool
+    {
+        return Auth::user()->hasRoles(['admin', 'root']);
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        return Auth::user()->hasRoles(['admin', 'root']);
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return Auth::user()->hasRoles(['admin', 'root']);
+    }
+
+    public static function canDeleteAny(): bool
+    {
+        return Auth::user()->hasRoles(['admin', 'root']);
     }
 
     public static function canForceDelete(Model $record): bool

@@ -8,10 +8,12 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
+use Filament\Models\Contracts\FilamentUser;
+use App\Enums\GroupStatus;
 use App\Models\Device;
 use App\Models\Room;
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, SoftDeletes;
@@ -46,7 +48,19 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'roles' => 'array',
+            'group' => 'array',
         ];
+    }
+
+    public function getGroupAttribute()
+    {
+        // Assuming 'roles' is an array of strings
+        return array_map(fn($role) => GroupStatus::tryFrom($role), $this->roles);
+    }
+
+    public function setGroupAttribute($value)
+    {
+        $this->group = array_map(fn($role) => GroupStatus::from($role)->value, is_array($value) ? $value : [$value]);
     }
 
     public function canAccessPanel($panel): bool{
