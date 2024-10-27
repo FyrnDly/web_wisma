@@ -20,8 +20,9 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-m-user-group';
     protected static ?string $label = 'Manajemen Akun';
+    protected static ?string $navigationIcon = 'heroicon-m-user-group';
+    protected static ?int $navigationSort = 0;
 
     public static function canViewAny(): bool {
         return Auth::user()->hasRoles(['root']);
@@ -102,17 +103,18 @@ class UserResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([
-                    Tables\Actions\ViewAction::make()->color('info'),
-                    Tables\Actions\EditAction::make()->color('warning'),
-                    Tables\Actions\DeleteAction::make()->hidden(fn($record) => $record->id == Auth::user()->id),
+                    Tables\Actions\ViewAction::make()
+                        ->color('info'),
+                    Tables\Actions\EditAction::make()
+                        ->color('warning')
+                        ->hidden(fn($record) => count(array_intersect(['root'], $record->roles))),
+                    Tables\Actions\DeleteAction::make()
+                        ->hidden(fn($record) => ($record->id == Auth::user()->id) or count(array_intersect(['root'], $record->roles))),
+                    Tables\Actions\ForceDeleteAction::make()
+                        ->hidden(fn($record) => count(array_intersect(['root'], $record->roles))),
+                    Tables\Actions\RestoreAction::make()
+                        ->hidden(fn($record) => count(array_intersect(['root'], $record->roles))),
                 ])->color('gray')
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
-                    Tables\Actions\RestoreBulkAction::make(),
-                ]),
             ]);
     }
 

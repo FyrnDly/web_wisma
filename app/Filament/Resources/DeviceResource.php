@@ -20,8 +20,9 @@ class DeviceResource extends Resource
 {
     protected static ?string $model = Device::class;
 
-    protected static ?string $navigationGroup = 'Data Laporan';
     protected static ?string $label = 'Perangkat IoT';
+    protected static ?string $navigationIcon = 'heroicon-o-cloud';
+    protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
     {
@@ -37,8 +38,8 @@ class DeviceResource extends Resource
                     ->maxLength(255),
                 Forms\Components\Select::make('type')
                     ->options([
-                        'main' => 'Navigasi',
-                        'secondary' => 'Beacon'
+                        'beacon' => 'Beacon',
+                        'smart mirror' => 'Smart Mirror',
                     ])->required()
                     ->label('Tipe')
                     ->native(false),
@@ -58,8 +59,8 @@ class DeviceResource extends Resource
                     Infolists\Components\TextEntry::make('name')->label('Nama Perangkat'),
                     Infolists\Components\TextEntry::make('mac_address')->label('Mac Address Perangkat'),
                     Infolists\Components\TextEntry::make('type')->getStateUsing(fn($record)=>match ($record->type) {
-                        'main' => 'Navigasi',
-                        'secondary' => 'Beacon'
+                        'beacon' => 'Beacon',
+                        'smart mirror' => 'Smart Mirror',
                     })->label('Tipe Perangkat')->badge(),
                 ])->columns([
                     'md' => 2,
@@ -85,40 +86,25 @@ class DeviceResource extends Resource
                 Tables\Columns\TextColumn::make('type')
                     ->label('Tipe')
                     ->getStateUsing(fn($record)=>match ($record->type) {
-                        'main' => 'Navigasi',
-                        'secondary' => 'Beacon'
+                        'beacon' => 'Beacon',
+                        'smart mirror' => 'Smart Mirror',
                     })->badge()
                     ->alignCenter()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('deleted_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('username')
+                    ->label('Dibuat Oleh')
+                    ->alignCenter()
+                    ->sortable(),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
+                Tables\Actions\ViewAction::make()->color('info'),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
                 Tables\Actions\ForceDeleteAction::make(),
                 Tables\Actions\RestoreAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
-                    Tables\Actions\RestoreBulkAction::make(),
-                ]),
             ]);
     }
 
