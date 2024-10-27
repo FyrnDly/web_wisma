@@ -21,20 +21,11 @@ return new class extends Migration
             $table->softDeletes();
         });
 
-        Schema::create('logs', function (Blueprint $table) {
-            $table->id();
-            $table->string('mac_address_device');
-            $table->json('status_beacon');
-            $table->json('data');
-            $table->timestamps();
-            $table->softDeletes();
-
-            $table->foreign('mac_address_device')->references('mac_address')->on('devices');
-        });
-
         Schema::create('rooms', function (Blueprint $table) {
             $table->id();
+            $table->string('code')->unique();
             $table->string('name');
+            $table->text('description')->nullable();
             $table->foreignId('created_by')->constrained('users');
             $table->timestamps();
             $table->softDeletes();
@@ -42,10 +33,21 @@ return new class extends Migration
 
         Schema::create('data_rooms', function (Blueprint $table) {
             $table->id();
-            $table->integer('device_connected');
-            $table->integer('human');
+            $table->integer('x')->nullable();
+            $table->integer('y')->nullable();
             $table->foreignId('room_id')->constrained('rooms');
-            $table->foreignId('log_id')->constrained('logs');
+            $table->string('mac_address');
+            $table->foreignId('created_by')->constrained('users');
+            $table->timestamps();
+            $table->softDeletes();
+
+            $table->foreign('mac_address')->references('mac_address')->on('devices');
+        });
+
+        Schema::create('logs', function (Blueprint $table) {
+            $table->id();
+            $table->json('data');
+            $table->foreignId('data_room_id')->constrained('data_rooms');
             $table->timestamps();
             $table->softDeletes();
         });

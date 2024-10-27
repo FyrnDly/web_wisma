@@ -3,15 +3,16 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Room;
+use App\Models\Device;
+use App\Models\DataRoom;
+use App\Enums\GroupStatus;
 use Illuminate\Notifications\Notifiable;
 use Filament\Models\Contracts\FilamentUser;
-use App\Enums\GroupStatus;
-use App\Models\Device;
-use App\Models\Room;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable implements FilamentUser
 {
@@ -86,5 +87,9 @@ class User extends Authenticatable implements FilamentUser
 
     public function devices(): HasMany {
         return $this->hasMany(Device::class, 'created_by', 'id');
+    }
+
+    public function data_rooms(): HasMany {
+        return $this->hasMany(DataRoom::class, 'created_by', 'id');
     }
 }
