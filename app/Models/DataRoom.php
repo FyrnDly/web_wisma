@@ -26,6 +26,18 @@ class DataRoom extends Model
         return Str::headline(DB::table('users')->where('id', $this->created_by)->value('name'));
     }
 
+    public function getDeviceNameAttribute() {
+        return DB::table('devices')->where('mac_address', $this->mac_address)->value('name');
+    }
+
+    public function getDeviceTypeAttribute() {
+        return Str::headline(DB::table('devices')->where('mac_address', $this->mac_address)->value('type'));
+    }
+
+    public function getCoordinateAttribute() {
+        return "(". $this->x .",". $this->y .")";
+    }
+
     public function user(): BelongsTo {
         return $this->belongsTo(User::class, 'created_by', 'id');
     }
