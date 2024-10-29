@@ -35,8 +35,11 @@ class DataRoomsRelationManager extends RelationManager
                     ->live()
                     ->required()
                     ->native(false)
-                    ->columnSpanFull()
                     ->options(Device::pluck('name', 'mac_address')),
+                Forms\Components\TextInput::make('topic')
+                    ->label("Pilih Perangkat")
+                    ->unique(ignoreRecord: true)
+                    ->required(),
                 Forms\Components\Section::make('Posisi Perangkat')
                     ->description("Pilih Posisi Berdasarkan Koordinat Kartesius")
                     ->visible(function(Forms\Get $get){
@@ -77,6 +80,12 @@ class DataRoomsRelationManager extends RelationManager
                     ->label("Tipe Perangkat")
                     ->badge()
                     ->alignCenter(),
+                Tables\Columns\TextColumn::make('topic')
+                    ->label("Topic MQTT")
+                    ->default("Belum Ditambahkan")
+                    ->color('gray')
+                    ->alignCenter()
+                    ->badge(),
                 Tables\Columns\TextColumn::make('username')
                     ->label("Dibuat Oleh")
                     ->alignCenter(),
@@ -106,11 +115,15 @@ class DataRoomsRelationManager extends RelationManager
                     ->color("gray"),
                 Infolists\Components\TextEntry::make('device_name')
                     ->label("Nama Perangkat"),
+                Infolists\Components\TextEntry::make('username')
+                    ->label("Dibuat Oleh"),
                 Infolists\Components\TextEntry::make('device_type')
                     ->label("Tipe Perangkat")
                     ->badge(),
-                Infolists\Components\TextEntry::make('username')
-                    ->label("Dibuat Oleh"),
+                Infolists\Components\TextEntry::make('topic')
+                    ->label("Topic MQTT")
+                    ->color('gray')
+                    ->badge(),
                 Infolists\Components\TextEntry::make('coordinate')
                     ->label("Posisi Perangkat")
                     ->visible(fn($record) => $record->device_type == "Beacon"),

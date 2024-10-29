@@ -19,7 +19,7 @@ class DataRoom extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'x', 'y', 'room_id', 'mac_address', 'created_by'
+        'topic', 'x', 'y', 'room_id', 'mac_address', 'created_by'
     ];
 
     public function getUsernameAttribute() {

@@ -33,10 +33,11 @@ return new class extends Migration
 
         Schema::create('data_rooms', function (Blueprint $table) {
             $table->id();
+            $table->string('topic')->unique()->nullable();
             $table->integer('x')->nullable();
             $table->integer('y')->nullable();
-            $table->foreignId('room_id')->constrained('rooms');
             $table->string('mac_address');
+            $table->foreignId('room_id')->constrained('rooms');
             $table->foreignId('created_by')->constrained('users');
             $table->timestamps();
             $table->softDeletes();

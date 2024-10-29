@@ -34,6 +34,7 @@ class DeviceResource extends Resource
                     ->maxLength(255),
                 Forms\Components\TextInput::make('mac_address')
                     ->label('Mac Address')
+                    ->unique(ignoreRecord: true)
                     ->required()
                     ->maxLength(255),
                 Forms\Components\Select::make('type')
