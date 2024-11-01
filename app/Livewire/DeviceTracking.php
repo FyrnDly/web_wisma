@@ -20,7 +20,7 @@ class DeviceTracking extends Component
     public function updateData()
     {
         $api = env("FLASK_API", "http://localhost:5000");
-        $response = Http::get($api."/api/positions", [
+        $response = Http::get($api."api/positions", [
             'room_id' => $this->room_id,
         ]);
 
