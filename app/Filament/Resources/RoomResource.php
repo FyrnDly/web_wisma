@@ -57,7 +57,7 @@ class RoomResource extends Resource
                     Tabs\Tab::make('Informasi Kamar')
                         ->schema(static::infoRoom()),
                     Tabs\Tab::make('Sistem Navigasi')
-                        ->schema(static::navigate()),
+                        ->schema(static::DeviceTracking()),
                     Tabs\Tab::make('Smart Mirror')
                         ->schema(static::smartMirror()),
                 ]),
@@ -126,10 +126,11 @@ class RoomResource extends Resource
         ];
     }
 
-    public static function navigate() {
+    public static function DeviceTracking() {
         return [
             Infolists\Components\Section::make([
-
+                Infolists\Components\ViewEntry::make('device-tracking')
+                    ->view('filament.device-tracking'),
             ])
         ];
     }
